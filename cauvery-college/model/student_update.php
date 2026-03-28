@@ -1,0 +1,62 @@
+<?php
+	@session_start();
+	include '../config.php';
+	
+	//Update Part
+	if(isset($_POST['student_update']))
+	{
+		$first_name=$_POST['first_name'];
+		$last_name=$_POST['last_name'];
+		$dob=$_POST['dob'];
+		$type=$_POST['type'];
+		$regno=$_POST['regno'];
+		$program=$_POST['program'];
+		$year_of_study=$_POST['year_of_study'];
+		$department=$_POST['department'];
+		$class_section=$_POST['class_section'];
+		$bloodgroup=$_POST['bloodgroup'];
+		$father_name=$_POST['father_name'];
+		$mother_name=$_POST['mother_name'];
+		$mobile=$_POST['mobile'];
+		$residental_address=$_POST['residental_address'];
+		$mobile_available_type=$_POST['mobile_available_type'];
+		/*$result = mysqli_query($conn,"SHOW TABLE STATUS WHERE `Name` ='student'");
+		$data = mysqli_fetch_assoc($result);*/
+		$student_id = $_SESSION['student_id'];
+		if(!empty($_FILES['id_image']['name']!=''))
+		{
+		$filename = $_FILES['id_image']['name'];
+		$ext = pathinfo($filename, PATHINFO_EXTENSION);
+		$id_image ="id_image".$student_id.".".$ext;
+		
+		$photo_loc = $_FILES['id_image']['tmp_name'];
+		$folder="../id_image/";
+		move_uploaded_file($photo_loc,$folder.$id_image);
+		}else{
+		$id_image = $_POST['old_id_image'];
+		}
+		$password=$_POST['password'];
+		$sql = "Update `student` SET `first_name`='".$first_name."',`last_name`='".$last_name."',`dob`='".$dob."',`type`='".$type."',`program`='".$program."',`year_of_study`='".$year_of_study."',`department`='".$department."',`class_section`='".$class_section."',`bloodgroup`='".$bloodgroup."',`father_name`='".$father_name."',`mother_name`='".$mother_name."',`mobile`='".$mobile."',`mobile_available_type`='".$mobile_available_type."',`residental_address`='".$residental_address."',`id_image`='".$id_image."' where student_id=".$_SESSION['student_id']."";
+		$query=mysqli_query($conn,$sql);
+		
+		$log_sql = "select `student_id`,`first_name` from `student` where student_id=".$_SESSION['student_id']."";
+		
+        $log_qr = mysqli_query($conn,$log_sql);
+		
+		$log_fet = mysqli_fetch_array($log_qr);
+		
+		    if($query==TRUE)
+			{	
+				$_SESSION['success']="Student Update Successfully";
+				$_SESSION['student_username'] = $log_fet['first_name']."".$log_fet['last_name'];
+				echo '<script type="text/javascript">window.location.href="../studentdashboard.php";</script>"';
+			}
+			else
+			{
+		        $_SESSION['error']="Student Update not Successfully";
+				echo '<script type="text/javascript">window.location.href="../student_update.php";</script>';
+				
+			}
+	
+	}
+	?>
